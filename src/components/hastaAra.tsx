@@ -93,12 +93,19 @@ const HastaAra: FunctionComponent<HastaAraProps> = ({ show, handleClose, handleS
         <Button variant="secondary" onClick={handleClose}>
           İptal Et
         </Button>
-        <Button variant="primary" onClick={()=>handleSubmit({
-          name: name,
-          tc: TC,
-          arrival: arrivalDate,
-          birthdate: birthdate
-        })}>
+        <Button variant="primary" onClick={() => {
+          handleSubmit({
+            name: name,
+            tc: TC,
+            arrival: arrivalDate,
+            birthdate: birthdate
+          });
+          setName("");
+          setTC("");
+          setArrivalDate([null, null]);
+          setBirthdate([null, null]);
+          handleClose();
+        }}>
           Ara
         </Button>
       </Modal.Footer>

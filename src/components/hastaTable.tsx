@@ -25,7 +25,7 @@ const HastaTable: FunctionComponent<HastaTableProps> = ({
   useEffect(() => {
     setHastaToShow(hastaList.slice(index * 20, (index + 1) * 20));
   }, [index, hastaList]);
-  console.log('list rerender');
+  // console.log('list rerender');
 
   const indexSize = hastaList.length / 20;
   return (

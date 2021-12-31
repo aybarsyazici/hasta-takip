@@ -15,6 +15,7 @@ function App() {
   const [hastaEkle, setHastaEkle] = useState(false);
   const [hastaList, setHastaList] = useState(hastalar);
   const [selectedHasta, setSelectedHasta] = useState<Hasta>();
+  const [filterCount, setFilterCount] = useState(0);
 
   const closeHastaAra = () => setHastaAra(false);
   const openHastaAra = () => setHastaAra(true);
@@ -23,32 +24,51 @@ function App() {
   const openHastaEkle = () => setHastaEkle(true);
 
   const filterHasta = (e: SearchParameters) => {
+    console.log(e);
     let filteredHastalar = hastalar;
 
-    if(e.tc !== ''){
-      filteredHastalar = filteredHastalar.filter((hasta)=>hasta.tc.includes(e.tc));
+    if (e.tc !== "") {
+      filteredHastalar = filteredHastalar.filter((hasta) =>
+        hasta.tc.includes(e.tc)
+      );
+      setFilterCount(1);
     }
-    if(e.arrival[0] !== null && e.arrival[1] !== null && e.arrival[0] !== undefined && e.arrival[1] !== undefined){
-      // @ts-ignore: Object is possibly 'null'.
-      filteredHastalar = filteredHastalar.filter((hasta)=> hasta.arrival.getTime() <= e!.arrival[1]?.getTime() && hasta.arrival.getTime() >= e!.arrival[0]?.getTime())
+    if (
+      e.arrival[0] !== null &&
+      e.arrival[1] !== null &&
+      e.arrival[0] !== undefined &&
+      e.arrival[1] !== undefined
+    ) {
+      e.arrival[1]?.setDate(e.arrival[1].getDate() + 1)
+      filteredHastalar = filteredHastalar.filter((hasta) => {
+        return (
+          // @ts-ignore: Object is possibly 'null'.
+          new Date(hasta.arrival).getTime() <= e.arrival[1]?.getTime() &&
+          // @ts-ignore: Object is possibly 'null'.
+          new Date(hasta.arrival).getTime() >= e.arrival[0].getTime()
+        );
+      });
+      setFilterCount(1);
     }
+
+    setHastaList(filteredHastalar);
   };
 
   const handleEkle = (e: Hasta) => {
     hastalar.push(e);
-    fs.writeFile("./src/data.json", JSON.stringify(hastalar), (err: any) => {
-    });
+    fs.writeFile("./src/data.json", JSON.stringify(hastalar), (err: any) => {});
+    setFilterCount(0);
     setHastaList(hastalar);
   };
 
   const handleDelete = (e: Hasta) => {
-    hastalar = hastalar.filter((hasta) => hasta.tc !== e.tc)
+    hastalar = hastalar.filter((hasta) => hasta.tc !== e.tc);
     setSelectedHasta(undefined);
     fs.writeFile("./src/data.json", JSON.stringify(hastalar), (err: any) => {
       // (err);
     });
+    setFilterCount(0);
     setHastaList(hastalar);
-
   };
 
   // useEffect(()=>{
@@ -67,16 +87,32 @@ function App() {
         show={hastaEkle}
         handleSubmit={handleEkle}
       />
-      <HastaInfo hasta={selectedHasta} handleClose={()=>setSelectedHasta(undefined)}/>
+      <HastaInfo
+        hasta={selectedHasta}
+        handleClose={() => setSelectedHasta(undefined)}
+      />
 
       <Container>
         <Row>
-          <Col xs={6}>
+          <Col xs={4}>
             <Button variant="primary" onClick={openHastaAra}>
               Hasta Arama menusu
             </Button>
           </Col>
-          <Col xs={6}>
+          <Col xs={4}>
+            {filterCount > 0 && (
+              <Button
+                variant="info"
+                onClick={() => {
+                  setHastaList(hastalar);
+                  setFilterCount(0);
+                }}
+              >
+                Tüm Hastaları Göster
+              </Button>
+            )}
+          </Col>
+          <Col xs={4}>
             <Button variant="success" onClick={openHastaEkle}>
               Hasta Ekleme menusu
             </Button>
@@ -87,6 +123,7 @@ function App() {
             hastaList={hastaList}
             onHastaSelect={(e) => setSelectedHasta(e)}
             onHastaDelete={(e) => handleDelete(e)}
+            key={hastaList.length}
           />
         </Row>
       </Container>
