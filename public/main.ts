@@ -1,8 +1,8 @@
+
 const { app, BrowserWindow } = require("electron");
 
 const remoteMain = require("@electron/remote/main");
 remoteMain.initialize();
-
 
 function createWindow() {
     const win = new BrowserWindow({
@@ -12,7 +12,9 @@ function createWindow() {
             nodeIntegration: true,
             enableRemoteModule: true,
             contextIsolation: false,
-        }
+        },
+        title: "Hasta Takip",
+        icon: __dirname + "/hospital.png"
     })
     remoteMain.enable(win.webContents);
     win.loadURL("http://localhost:3000");

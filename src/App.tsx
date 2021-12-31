@@ -59,14 +59,14 @@ function App() {
           </Col>
         </Row>
         <Row style={{ marginTop: "1rem" }}>
-          <Col xs={12} md={6}>
+          <Col xs={12} md={12} lg={6}>
             <HastaTable
               hastaList={hastaList}
               onHastaSelect={(e) => setSelectedHasta(e)}
               onHastaDelete={(e) => handleDelete(e)}
             />
           </Col>
-          <Col xs={12} md={6}>
+          <Col xs={12} md={12} lg={6}>
             <HastaInfo hasta={selectedHasta}/>
           </Col>
         </Row>

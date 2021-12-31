@@ -1,8 +1,7 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 import {
     Modal,
     Form,
-    Card,
     Button,
   } from "react-bootstrap";
 
@@ -11,7 +10,13 @@ interface HastaAraProps {
     handleClose: () => void;
 }
 
-const HastaAra: FunctionComponent<HastaAraProps> = ({show, handleClose}) => {
+const HastaAra: FunctionComponent<HastaAraProps> = ({ show, handleClose }) => {
+  
+  const [name, setName] = useState("");
+  const [TC, setTC] = useState("");
+  const [notes, setNotes] = useState("");
+
+
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
@@ -19,13 +24,13 @@ const HastaAra: FunctionComponent<HastaAraProps> = ({show, handleClose}) => {
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group className="mb-3" controlId="name">
+          <Form.Group className="mb-3" controlId="name" >
             <Form.Label>Hasta Adi</Form.Label>
-            <Form.Control type="text" placeholder="Örnek Hasta Adi" />
+            <Form.Control type="text" placeholder="Örnek Hasta Adi" value={name} onChange={(e)=>setName(e.currentTarget.value)}/>
           </Form.Group>
           <Form.Group className="mb-3" controlId="id">
             <Form.Label>Hasta TC</Form.Label>
-            <Form.Control type="text" placeholder="XXXXXXXXXX" />
+            <Form.Control type="text" placeholder="XXXXXXXXXX" value={TC} onChange={(e)=>setTC(e.currentTarget.value)}/>
           </Form.Group>
         </Form>
       </Modal.Body>
