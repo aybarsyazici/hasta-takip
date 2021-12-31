@@ -1,6 +1,11 @@
 export type Hasta = {
     name: string;
     tc: string;
+    address: string;
     notes: string;
-    date: Date;
+    onam: string;
+    telephone: string;
+    email: string;
+    arrival: Date;
+    mdt?: Date;
 }

@@ -25,6 +25,7 @@ const HastaTable: FunctionComponent<HastaTableProps> = ({
   useEffect(() => {
     setHastaToShow(hastaList.slice(index * 20, (index + 1) * 20));
   }, [index, hastaList]);
+  console.log('list rerender');
 
   const indexSize = hastaList.length / 20;
   return (
@@ -58,7 +59,8 @@ const HastaTable: FunctionComponent<HastaTableProps> = ({
           <tr>
             <th>İsim</th>
             <th>TC</th>
-            <th>Tarih</th>
+            <th>Gelis Tarihi</th>
+            <th>MDT</th>
             <th></th>
           </tr>
         </thead>
@@ -74,9 +76,26 @@ const HastaTable: FunctionComponent<HastaTableProps> = ({
             >
               <td>{hasta.name}</td>
               <td>{hasta.tc}</td>
-              <td>{new Date(hasta.date).toLocaleDateString("tr-TR", {
-                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: "numeric", minute: "numeric"
-              })}</td>
+              <td>
+                {new Date(hasta.arrival).toLocaleDateString("tr-TR", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                })}
+              </td>
+              <td>
+                {hasta.mdt ? new Date(hasta.mdt).toLocaleDateString("tr-TR", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                }) : '-'}
+              </td>
               <td
                 onClick={() => {
                   setShowModal(hasta);

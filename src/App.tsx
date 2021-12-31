@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
-import HastaAra from "./components/hastaAra";
+import HastaAra, { SearchParameters } from "./components/hastaAra";
 import HastaEkle from "./components/hastaEkle";
 import HastaInfo from "./components/hastaInfo";
 import HastaTable from "./components/hastaTable";
@@ -22,29 +22,53 @@ function App() {
   const closeHastaEkle = () => setHastaEkle(false);
   const openHastaEkle = () => setHastaEkle(true);
 
+  const filterHasta = (e: SearchParameters) => {
+    let filteredHastalar = hastalar;
+
+    if(e.tc !== ''){
+      filteredHastalar = filteredHastalar.filter((hasta)=>hasta.tc.includes(e.tc));
+    }
+    if(e.arrival[0] !== null && e.arrival[1] !== null && e.arrival[0] !== undefined && e.arrival[1] !== undefined){
+      // @ts-ignore: Object is possibly 'null'.
+      filteredHastalar = filteredHastalar.filter((hasta)=> hasta.arrival.getTime() <= e!.arrival[1]?.getTime() && hasta.arrival.getTime() >= e!.arrival[0]?.getTime())
+    }
+  };
+
   const handleEkle = (e: Hasta) => {
     hastalar.push(e);
-    setHastaList(hastalar);
     fs.writeFile("./src/data.json", JSON.stringify(hastalar), (err: any) => {
-      console.log(err);
     });
+    setHastaList(hastalar);
   };
 
   const handleDelete = (e: Hasta) => {
-    setHastaList(hastaList.filter((hasta) => hasta.tc !== e.tc));
-    fs.writeFile("./src/data.json", JSON.stringify(hastaList), (err: any) => {
-      console.log(err);
+    hastalar = hastalar.filter((hasta) => hasta.tc !== e.tc)
+    setSelectedHasta(undefined);
+    fs.writeFile("./src/data.json", JSON.stringify(hastalar), (err: any) => {
+      // (err);
     });
-  }
+    setHastaList(hastalar);
+
+  };
+
+  // useEffect(()=>{
+  //   console.log(hastaList)
+  // },[hastaList])
 
   return (
     <React.Fragment>
-      <HastaAra handleClose={closeHastaAra} show={hastaAra} />
+      <HastaAra
+        handleClose={closeHastaAra}
+        show={hastaAra}
+        handleSubmit={filterHasta}
+      />
       <HastaEkle
         handleClose={closeHastaEkle}
         show={hastaEkle}
         handleSubmit={handleEkle}
       />
+      <HastaInfo hasta={selectedHasta} handleClose={()=>setSelectedHasta(undefined)}/>
+
       <Container>
         <Row>
           <Col xs={6}>
@@ -59,16 +83,11 @@ function App() {
           </Col>
         </Row>
         <Row style={{ marginTop: "1rem" }}>
-          <Col xs={12} md={12} lg={6}>
-            <HastaTable
-              hastaList={hastaList}
-              onHastaSelect={(e) => setSelectedHasta(e)}
-              onHastaDelete={(e) => handleDelete(e)}
-            />
-          </Col>
-          <Col xs={12} md={12} lg={6}>
-            <HastaInfo hasta={selectedHasta}/>
-          </Col>
+          <HastaTable
+            hastaList={hastaList}
+            onHastaSelect={(e) => setSelectedHasta(e)}
+            onHastaDelete={(e) => handleDelete(e)}
+          />
         </Row>
       </Container>
     </React.Fragment>
