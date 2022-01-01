@@ -14,8 +14,8 @@ function App() {
   const [hastaAra, setHastaAra] = useState(false);
   const [hastaEkle, setHastaEkle] = useState(false);
   const [hastaList, setHastaList] = useState(hastalar);
-  const [selectedHasta, setSelectedHasta] = useState<Hasta>();
   const [filterCount, setFilterCount] = useState(0);
+  const [selectedHastaIndex, setSelectedHastaIndex] = useState<number>();
 
   const closeHastaAra = () => setHastaAra(false);
   const openHastaAra = () => setHastaAra(true);
@@ -64,11 +64,16 @@ function App() {
   };
 
   const updateHasta = (e: Hasta) => {
-    const index = hastalar.findIndex((hasta) => hasta.tc === e.tc);
-    hastalar[index] = e;
-    fs.writeFile("./src/data.json", JSON.stringify(hastalar), (err: any) => {});
-    setFilterCount(0);
-    setHastaList(hastalar);
+    if (selectedHastaIndex) {
+      hastalar[selectedHastaIndex] = e;
+      fs.writeFile(
+        "./src/data.json",
+        JSON.stringify(hastalar),
+        (err: any) => {}
+      );
+      setFilterCount(0);
+      setHastaList(hastalar);
+    }
   };
 
   const handleEkle = (e: Hasta) => {
@@ -80,7 +85,7 @@ function App() {
 
   const handleDelete = (e: Hasta) => {
     hastalar = hastalar.filter((hasta) => hasta.tc !== e.tc);
-    setSelectedHasta(undefined);
+    setSelectedHastaIndex(undefined);
     fs.writeFile("./src/data.json", JSON.stringify(hastalar), (err: any) => {
       // (err);
     });
@@ -105,8 +110,8 @@ function App() {
         handleSubmit={handleEkle}
       />
       <HastaInfo
-        hasta={selectedHasta}
-        handleClose={() => setSelectedHasta(undefined)}
+        hasta={selectedHastaIndex !== undefined ? hastaList[selectedHastaIndex] : undefined}
+        handleClose={() => setSelectedHastaIndex(undefined)}
         handleSubmit={(e) => updateHasta(e)}
       />
       <Container>
@@ -139,7 +144,7 @@ function App() {
           <HastaTable
             hastaList={hastaList}
             onHastaSelect={(e) => {
-              setSelectedHasta(hastaList.at(e));
+              setSelectedHastaIndex(e);
             }}
             onHastaDelete={(e) => handleDelete(e)}
             key={hastaList.length}
