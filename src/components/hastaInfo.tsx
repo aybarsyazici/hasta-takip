@@ -1,5 +1,5 @@
 import { FunctionComponent, useState, useEffect } from "react";
-import { Form, Row, Col, Card, Modal } from "react-bootstrap";
+import { Form, Row, Col, Button, Modal } from "react-bootstrap";
 import { Hasta } from "../types/hasta";
 import TextField from "@mui/material/TextField";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
@@ -10,9 +10,10 @@ import "../styles/hastaInfo.scss"
 interface HastaInfoProps {
   hasta: Hasta | undefined;
   handleClose: () => void;
+  handleSubmit: (e: Hasta) => void;
 }
 
-const HastaInfo: FunctionComponent<HastaInfoProps> = ({ hasta,handleClose }) => {
+const HastaInfo: FunctionComponent<HastaInfoProps> = ({ hasta,handleClose, handleSubmit }) => {
   const [name, setName] = useState(hasta?.name);
   const [TC, setTC] = useState(hasta?.tc);
   const [notes, setNotes] = useState(hasta?.notes);
@@ -96,7 +97,6 @@ const HastaInfo: FunctionComponent<HastaInfoProps> = ({ hasta,handleClose }) => 
                 style={{
                   display: "flex",
                   justifyContent: "flex-start",
-                  gap: "5rem",
                 }}
               >
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -151,6 +151,22 @@ const HastaInfo: FunctionComponent<HastaInfoProps> = ({ hasta,handleClose }) => 
           </Row>
         </Form>
       </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={()=>{
+          handleSubmit({
+            name: name ? name : "",
+            tc: TC ? TC : "",
+            address: address ? address : "",
+            notes: notes ? notes : "",
+            onam: onam ? onam: "",
+            telephone: telephone ? telephone : "",
+            email: email ? email : "",
+            arrival: arrival,
+            mdt: mdt
+          })
+          handleClose();
+        }}>Guncelle</Button>
+      </Modal.Footer>
     </Modal>
   );
 };

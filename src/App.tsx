@@ -39,8 +39,11 @@ function App() {
       e.arrival[0] !== undefined &&
       e.arrival[1] !== undefined
     ) {
-      e.arrival[1]?.setDate(e.arrival[1].getDate() + 1)
+      e.arrival[1]?.setDate(e.arrival[1].getDate() + 1);
       filteredHastalar = filteredHastalar.filter((hasta) => {
+        if (hasta.arrival === undefined) {
+          return false;
+        }
         return (
           // @ts-ignore: Object is possibly 'null'.
           new Date(hasta.arrival).getTime() <= e.arrival[1]?.getTime() &&
@@ -50,8 +53,22 @@ function App() {
       });
       setFilterCount(1);
     }
+    if (e.name !== "") {
+      filteredHastalar = filteredHastalar.filter((hasta) =>
+        hasta.name.includes(e.name)
+      );
+      setFilterCount(1);
+    }
 
     setHastaList(filteredHastalar);
+  };
+
+  const updateHasta = (e: Hasta) => {
+    const index = hastalar.findIndex((hasta) => hasta.tc === e.tc);
+    hastalar[index] = e;
+    fs.writeFile("./src/data.json", JSON.stringify(hastalar), (err: any) => {});
+    setFilterCount(0);
+    setHastaList(hastalar);
   };
 
   const handleEkle = (e: Hasta) => {
@@ -90,8 +107,8 @@ function App() {
       <HastaInfo
         hasta={selectedHasta}
         handleClose={() => setSelectedHasta(undefined)}
+        handleSubmit={(e) => updateHasta(e)}
       />
-
       <Container>
         <Row>
           <Col xs={4}>
@@ -121,7 +138,9 @@ function App() {
         <Row style={{ marginTop: "1rem" }}>
           <HastaTable
             hastaList={hastaList}
-            onHastaSelect={(e) => setSelectedHasta(e)}
+            onHastaSelect={(e) => {
+              setSelectedHasta(hastaList.at(e));
+            }}
             onHastaDelete={(e) => handleDelete(e)}
             key={hastaList.length}
           />

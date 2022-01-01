@@ -6,6 +6,6 @@ export type Hasta = {
     onam: string;
     telephone: string;
     email: string;
-    arrival: Date;
+    arrival?: Date;
     mdt?: Date;
 }

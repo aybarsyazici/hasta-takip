@@ -6,7 +6,7 @@ import "../styles/hastaTable.scss";
 
 interface HastaTableProps {
   hastaList: Hasta[];
-  onHastaSelect: (e: Hasta) => void;
+  onHastaSelect: (e: number) => void;
   onHastaDelete: (e: Hasta) => void;
 }
 
@@ -57,6 +57,7 @@ const HastaTable: FunctionComponent<HastaTableProps> = ({
       <Table striped bordered hover>
         <thead>
           <tr>
+            <th>#</th>
             <th>İsim</th>
             <th>TC</th>
             <th>Gelis Tarihi</th>
@@ -65,26 +66,28 @@ const HastaTable: FunctionComponent<HastaTableProps> = ({
           </tr>
         </thead>
         <tbody>
-          {hastaToShow.map((hasta) => (
+          {hastaToShow.map((hasta, hastaIndex) => {
+            return (
             <tr
               key={hasta.tc}
               onClick={() => {
-                onHastaSelect(hasta);
+                onHastaSelect(index*20 + hastaIndex);
                 setSelectedHasta(hasta);
               }}
               className={selectedHasta?.tc === hasta.tc ? "hasta--active" : ""}
             >
+              <td>{hastaIndex}</td>
               <td>{hasta.name}</td>
               <td>{hasta.tc}</td>
               <td>
-                {new Date(hasta.arrival).toLocaleDateString("tr-TR", {
+                {hasta.arrival && (new Date(hasta.arrival).toLocaleDateString("tr-TR", {
                   weekday: "long",
                   year: "numeric",
                   month: "long",
                   day: "numeric",
                   hour: "numeric",
                   minute: "numeric",
-                })}
+                }))}
               </td>
               <td>
                 {hasta.mdt ? new Date(hasta.mdt).toLocaleDateString("tr-TR", {
@@ -105,7 +108,7 @@ const HastaTable: FunctionComponent<HastaTableProps> = ({
                 <AiOutlineDelete />
               </td>
             </tr>
-          ))}
+          )})}
         </tbody>
       </Table>
       Sayfa: {index}

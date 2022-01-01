@@ -94,7 +94,6 @@ const HastaEkle: FunctionComponent<HastaEkleProps> = ({
                 style={{
                   display: "flex",
                   justifyContent: "flex-start",
-                  gap: "5rem",
                 }}
               >
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
