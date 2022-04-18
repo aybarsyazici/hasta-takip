@@ -2,7 +2,10 @@
 const { app, BrowserWindow } = require("electron");
 
 const remoteMain = require("@electron/remote/main");
+const path = require("path");
 remoteMain.initialize();
+
+const isDev = require("electron-is-dev");
 
 function createWindow() {
     const win = new BrowserWindow({
@@ -17,7 +20,7 @@ function createWindow() {
         icon: __dirname + "/hospital.png"
     })
     remoteMain.enable(win.webContents);
-    win.loadURL("http://localhost:3000");
+    win.loadURL(isDev ? "http://localhost:3000" : `file://${path.join(__dirname, '../build/index.html')}`);
 }
 
 app.on("ready", createWindow);
